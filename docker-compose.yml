@@ -1,0 +1,39 @@
+services:
+  postgres:
+    image: postgres
+    container_name: postgres-qtim
+    restart: always
+    shm_size: 128mb
+    ports:
+      - ${DB_PORT}:5432
+    environment:
+      POSTGRES_USER: ${DB_USERNAME:-max}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-12321}
+      POSTGRES_DB: ${DB_DATABASE:-qtim}
+    networks:
+      - web-app-network
+    volumes:
+      - postgres_qtim:/var/lib/postgresql/data
+
+  redis:
+    container_name: cache
+    image: redis
+    restart: always
+    ports:
+      - 6390:6379
+    networks:
+      - web-app-network
+    volumes:
+      - redis_qtim:/data
+
+networks:
+  web-app-network:
+    name: web-app-network
+    external: true
+
+volumes:
+  postgres_qtim:
+    name: postgres_qtim
+  redis_qtim:
+    name: redis_qtim
+    driver: local
